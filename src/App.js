@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Link, useParams } from "react-router-dom";
 
 function Home() {
   return <h2>Home</h2>;
@@ -11,6 +11,29 @@ function About() {
 
 function Users() {
   return <h2>Users</h2>;
+}
+
+
+async function getArticle(user, articleId){
+  let url = `https://raw.githubusercontent.com/${user}/thepress/master/docs/articles/${articleId}/index.md`
+  let res = await fetch(url)
+  let md = await res.text()
+  return md
+}
+
+
+function Article(){
+  let urlParams = useParams()
+
+  getArticle(urlParams.githubUser, urlParams.articleId)
+
+  console.log(urlParams)
+  return (
+    <div>
+      <span>{'githubUser' + urlParams.githubUser}</span><br/>
+      <span>{'articleSlug' + urlParams.articleSlug}</span>
+    </div>
+  )
 }
 
 export default function App() {
@@ -39,6 +62,9 @@ export default function App() {
           </Route>
           <Route path="/users">
             <Users />
+          </Route>
+          <Route path="/:githubUser/:articleId">
+            <Article />
           </Route>
           <Route path="/">
             <Home />
